@@ -1,0 +1,314 @@
+<?xml version="1.0"?>
+<blog>
+	<entry ID="891">
+		<post_author>1</post_author>
+		<created>2018-07-24 19:36:12</created>
+		<article>All the iterators discussed so far are built-in, but some SPL iterators, such as &lt;code&gt;FilterIterator&lt;/code&gt;, exist only as abstract classes, so you need to extend them before you can use them. Also, all the classes in the Standard PHP Library are extensible, allowing you to create your own iterators.&#13;
+&lt;h2&gt;Understanding the Iterator interface&lt;/h2&gt;&#13;
+All iterators implement the &lt;code&gt;Iterator&lt;/code&gt; interface, which comprises the five methods in table below.&#13;
+&lt;table style=&quot;border-collapse: collapse; width: 100%;&quot; border=&quot;1&quot;&gt;&#13;
+&lt;tbody&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;th style=&quot;width: auto;&quot;&gt;&lt;strong&gt;Method&lt;/strong&gt;&lt;/th&gt;&#13;
+&lt;th style=&quot;width: 75%;&quot;&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;rewind()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Moves the iterator back to the first element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;key()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Returns the key of the current element. This can be a string or an index number, depending on the object.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;current()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Returns the value of the current element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;next()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Moves to the next element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;valid()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Checks if there is a current element after calls to &lt;code&gt;next()&lt;/code&gt; or &lt;code&gt;rewind()&lt;/code&gt;. Returns &lt;code&gt;true&lt;/code&gt; if one is found; otherwise &lt;code&gt;false&lt;/code&gt;.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;/tbody&gt;&#13;
+&lt;/table&gt;&#13;
+&#13;
+The following code shows the methods listed in table above in action by using a &lt;code&gt;while&lt;/code&gt; loop instead of &lt;code&gt;foreach&lt;/code&gt;.&#13;
+[php]&#13;
+$author = array(&#13;
+	'name' =&amp;gt; 'David',&#13;
+	'city' =&amp;gt; 'London',&#13;
+	'country' =&amp;gt; 'United Kingdom'&#13;
+);&#13;
+&#13;
+$iterator = new ArrayIterator($author);&#13;
+&#13;
+// Move iterator to the first item&#13;
+$iterator-&amp;gt;rewind();&#13;
+// Loop through each elemnt while valid() method returns true&#13;
+while ($iterator-&amp;gt;valid()) {&#13;
+	// Display the key and value of each element&#13;
+	echo $iterator-&amp;gt;key() . ': ' . $iterator-&amp;gt;current() . '&amp;lt;br&amp;gt;';&#13;
+	// Move to the next element&#13;
+	$iterator-&amp;gt;next();&#13;
+}&#13;
+[/php]&#13;
+Strictly speaking, it's not necessary to use the &lt;code&gt;rewind()&lt;/code&gt; method with a new iterator, but I have included it here to show all five methods in operation. It goes without saying that a &lt;code&gt;foreach&lt;/code&gt; loop is much simpler, but it's useful to know how these methods work if you need greater control over the flow of a loop either with an existing or when extending one. &#13;
+&#13;
+&lt;h2&gt;Extending the FilterIterator class&lt;/h2&gt;&#13;
+The &lt;code&gt;FilterIterator&lt;/code&gt; class is abstract, so you can't instantiate a &lt;code&gt;FilterIterator&lt;/code&gt; object directly. You need to extend the class by defining the &lt;code&gt;accept()&lt;/code&gt; method, which should return &lt;code&gt;true&lt;/code&gt; when the current element meets whatever conditions you set.&#13;
+&#13;
+This example shows you how to extend the &lt;code&gt;FilterIterator&lt;/code&gt; class to set the maximum price of books to be displayed from &lt;code&gt;inventory.xml&lt;/code&gt;. It begins by hard-coding the &lt;code&gt;accept()&lt;/code&gt; method to limit the maximum price to $40.&#13;
+&#13;
+[php]&#13;
+class PriceFilter extends FilterIterator&#13;
+{&#13;
+	public function accept()&#13;
+	{&#13;
+		return substr($this-&amp;gt;current(), 1) &amp;lt;= 40;&#13;
+	}&#13;
+}&#13;
+[/php]&#13;
+&#13;
+The &lt;code&gt;FilterIterator&lt;/code&gt; abstract class defined all the &lt;code&gt;Iterator&lt;/code&gt; interface methods listed in table above, so the only thing you need to do is extend the &lt;code&gt;FilterIterator&lt;/code&gt; class and create your own &lt;code&gt;accept()&lt;/code&gt; method.&#13;
+&#13;
+The &lt;code&gt;accept()&lt;/code&gt; method needs to see whether the value of the current node is less than 40. If it is, it should return &lt;code&gt;true&lt;/code&gt;; otherwise &lt;code&gt;false&lt;/code&gt;.&#13;
+&#13;
+&lt;code&gt;$this-&gt;current()&lt;/code&gt; gives you the value of the current element, but the prices in &lt;code&gt;inventory.xml&lt;/code&gt; begin with a dollar sign, so you need to strip that off by passing &lt;code&gt;$this-&gt;current()&lt;/code&gt; to &lt;code&gt;substr()&lt;/code&gt; and beginning the substring at the second character counting from 0. This leaves you with raw number to make the comparison. All you're interested in is whether it's &lt;code&gt;true&lt;/code&gt; or &lt;code&gt;false&lt;/code&gt;, so the result is returned in the same line.</article>
+		<title>Extending iterators</title>
+		<article_id>878-revision-v1</article_id>
+		<updated>2018-07-24 19:36:12</updated>
+		<image>revision</image>
+	</entry>
+	<entry ID="890">
+		<post_author>1</post_author>
+		<created>2018-07-24 19:20:31</created>
+		<article>All the iterators discussed so far are built-in, but some SPL iterators, such as &lt;code&gt;FilterIterator&lt;/code&gt;, exist only as abstract classes, so you need to extend them before you can use them. Also, all the classes in the Standard PHP Library are extensible, allowing you to create your own iterators.&#13;
+&lt;h2&gt;Understanding the Iterator interface&lt;/h2&gt;&#13;
+All iterators implement the &lt;code&gt;Iterator&lt;/code&gt; interface, which comprises the five methods in table below.&#13;
+&lt;table style=&quot;border-collapse: collapse; width: 100%;&quot; border=&quot;1&quot;&gt;&#13;
+&lt;tbody&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;th style=&quot;width: auto;&quot;&gt;&lt;strong&gt;Method&lt;/strong&gt;&lt;/th&gt;&#13;
+&lt;th style=&quot;width: 75%;&quot;&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;rewind()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Moves the iterator back to the first element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;key()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Returns the key of the current element. This can be a string or an index number, depending on the object.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;current()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Returns the value of the current element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;next()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Moves to the next element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;valid()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Checks if there is a current element after calls to &lt;code&gt;next()&lt;/code&gt; or &lt;code&gt;rewind()&lt;/code&gt;. Returns &lt;code&gt;true&lt;/code&gt; if one is found; otherwise &lt;code&gt;false&lt;/code&gt;.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;/tbody&gt;&#13;
+&lt;/table&gt;&#13;
+&#13;
+The following code shows the methods listed in table above in action by using a &lt;code&gt;while&lt;/code&gt; loop instead of &lt;code&gt;foreach&lt;/code&gt;.&#13;
+[php]&#13;
+$author = array(&#13;
+	'name' =&amp;gt; 'David',&#13;
+	'city' =&amp;gt; 'London',&#13;
+	'country' =&amp;gt; 'United Kingdom'&#13;
+);&#13;
+&#13;
+$iterator = new ArrayIterator($author);&#13;
+&#13;
+// Move iterator to the first item&#13;
+$iterator-&amp;gt;rewind();&#13;
+// Loop through each elemnt while valid() method returns true&#13;
+while ($iterator-&amp;gt;valid()) {&#13;
+	// Display the key and value of each element&#13;
+	echo $iterator-&amp;gt;key() . ': ' . $iterator-&amp;gt;current() . '&amp;lt;br&amp;gt;';&#13;
+	// Move to the next element&#13;
+	$iterator-&amp;gt;next();&#13;
+}&#13;
+[/php]&#13;
+Strictly speaking, it's not necessary to use the &lt;code&gt;rewind()&lt;/code&gt; method with a new iterator, but I have included it here to show all five methods in operation. It goes without saying that a &lt;code&gt;foreach&lt;/code&gt; loop is much simpler, but it's useful to know how these methods work if you need greater control over the flow of a loop either with an existing or when extending one. &#13;
+&#13;
+&lt;h2&gt;Extending the FilterIterator class&lt;/h2&gt;&#13;
+The &lt;code&gt;FilterIterator&lt;/code&gt; class is abstract, so you can't instantiate a &lt;code&gt;FilterIterator&lt;/code&gt; object directly. You need to extend the class by defining the &lt;code&gt;accept()&lt;/code&gt; method, which should return &lt;code&gt;true&lt;/code&gt; when the current element meets whatever conditions you set.</article>
+		<title>Extending iterators</title>
+		<article_id>878-revision-v1</article_id>
+		<updated>2018-07-24 19:20:31</updated>
+		<image>revision</image>
+	</entry>
+	<entry ID="889">
+		<post_author>1</post_author>
+		<created>2018-07-24 19:16:46</created>
+		<article>All the iterators discussed so far are built-in, but some SPL iterators, such as &lt;code&gt;FilterIterator&lt;/code&gt;, exist only as abstract classes, so you need to extend them before you can use them. Also, all the classes in the Standard PHP Library are extensible, allowing you to create your own iterators.&#13;
+&lt;h2&gt;Understanding the Iterator interface&lt;/h2&gt;&#13;
+All iterators implement the &lt;code&gt;Iterator&lt;/code&gt; interface, which comprises the five methods in table below.&#13;
+&lt;table style=&quot;border-collapse: collapse; width: 100%;&quot; border=&quot;1&quot;&gt;&#13;
+&lt;tbody&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;th style=&quot;width: auto;&quot;&gt;&lt;strong&gt;Method&lt;/strong&gt;&lt;/th&gt;&#13;
+&lt;th style=&quot;width: 75%;&quot;&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;rewind()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Moves the iterator back to the first element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;key()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Returns the key of the current element. This can be a string or an index number, depending on the object.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;current()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Returns the value of the current element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;next()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Moves to the next element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;valid()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Checks if there is a current element after calls to &lt;code&gt;next()&lt;/code&gt; or &lt;code&gt;rewind()&lt;/code&gt;. Returns &lt;code&gt;true&lt;/code&gt; if one is found; otherwise &lt;code&gt;false&lt;/code&gt;.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;/tbody&gt;&#13;
+&lt;/table&gt;&#13;
+&#13;
+The following code shows the methods listed in table above in action by using a &lt;code&gt;while&lt;/code&gt; loop instead of &lt;code&gt;foreach&lt;/code&gt;.&#13;
+[php]&#13;
+$author = array(&#13;
+	'name' =&amp;gt; 'David',&#13;
+	'city' =&amp;gt; 'London',&#13;
+	'country' =&amp;gt; 'United Kingdom'&#13;
+);&#13;
+&#13;
+$iterator = new ArrayIterator($author);&#13;
+&#13;
+// Move iterator to the first item&#13;
+$iterator-&amp;gt;rewind();&#13;
+// Loop through each elemnt while valid() method returns true&#13;
+while ($iterator-&amp;gt;valid()) {&#13;
+	// Display the key and value of each element&#13;
+	echo $iterator-&amp;gt;key() . ': ' . $iterator-&amp;gt;current() . '&amp;lt;br&amp;gt;';&#13;
+	// Move to the next element&#13;
+	$iterator-&amp;gt;next();&#13;
+}&#13;
+[/php]&#13;
+Strictly speaking, it's not necessary to use the &lt;code&gt;rewind()&lt;/code&gt; method with a new iterator, but I have included it here to show all five methods in operation. It goes without saying that a &lt;code&gt;foreach&lt;/code&gt; loop is much simpler, but it's useful to know how these methods work if you need greater control over the flow of a loop either with an existing or when extending one. </article>
+		<title>Extending iterators</title>
+		<article_id>878-revision-v1</article_id>
+		<updated>2018-07-24 19:16:46</updated>
+		<image>revision</image>
+	</entry>
+	<entry ID="888">
+		<post_author>1</post_author>
+		<created>2018-07-24 19:13:13</created>
+		<article>All the iterators discussed so far are built-in, but some SPL iterators, such as &lt;code&gt;FilterIterator&lt;/code&gt;, exist only as abstract classes, so you need to extend them before you can use them. Also, all the classes in the Standard PHP Library are extensible, allowing you to create your own iterators.&#13;
+&lt;h2&gt;Understanding the Iterator interface&lt;/h2&gt;&#13;
+All iterators implement the &lt;code&gt;Iterator&lt;/code&gt; interface, which comprises the five methods in table below.&#13;
+&lt;table style=&quot;border-collapse: collapse; width: 100%;&quot; border=&quot;1&quot;&gt;&#13;
+&lt;tbody&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;th style=&quot;width: auto;&quot;&gt;&lt;strong&gt;Method&lt;/strong&gt;&lt;/th&gt;&#13;
+&lt;th style=&quot;width: 75%;&quot;&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;rewind()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Moves the iterator back to the first element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;key()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Returns the key of the current element. This can be a string or an index number, depending on the object.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;current()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Returns the value of the current element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;next()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Moves to the next element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;valid()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Checks if there is a current element after calls to &lt;code&gt;next()&lt;/code&gt; or &lt;code&gt;rewind()&lt;/code&gt;. Returns &lt;code&gt;true&lt;/code&gt; if one is found; otherwise &lt;code&gt;false&lt;/code&gt;.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;/tbody&gt;&#13;
+&lt;/table&gt;&#13;
+&#13;
+The following code shows the methods listed in table above in action by using a &lt;code&gt;while&lt;/code&gt; loop instead of &lt;code&gt;foreach&lt;/code&gt;.&#13;
+[php]&#13;
+$author = array(&#13;
+	'name' =&amp;gt; 'David',&#13;
+	'city' =&amp;gt; 'London',&#13;
+	'country' =&amp;gt; 'United Kingdom'&#13;
+);&#13;
+&#13;
+$iterator = new ArrayIterator($author);&#13;
+&#13;
+// Move iterator to the first item&#13;
+$iterator-&amp;gt;rewind();&#13;
+// Loop through each elemnt while valid() method returns true&#13;
+while ($iterator-&amp;gt;valid()) {&#13;
+	// Display the key and value of each element&#13;
+	echo $iterator-&amp;gt;key() . ': ' . $iterator-&amp;gt;current() . '&amp;lt;br&amp;gt;';&#13;
+	// Move to the next element&#13;
+	$iterator-&amp;gt;next();&#13;
+}&#13;
+[/php]</article>
+		<title>Extending iterators</title>
+		<article_id>878-revision-v1</article_id>
+		<updated>2018-07-24 19:13:13</updated>
+		<image>revision</image>
+	</entry>
+	<entry ID="887">
+		<post_author>1</post_author>
+		<created>2018-07-24 19:06:59</created>
+		<article>All the iterators discussed so far are built-in, but some SPL iterators, such as &lt;code&gt;FilterIterator&lt;/code&gt;, exist only as abstract classes, so you need to extend them before you can use them. Also, all the classes in the Standard PHP Library are extensible, allowing you to create your own iterators.&#13;
+&lt;h2&gt;Understanding the Iterator interface&lt;/h2&gt;&#13;
+All iterators implement the &lt;code&gt;Iterator&lt;/code&gt; interface, which comprises the five methods in table below.&#13;
+&lt;table style=&quot;border-collapse: collapse; width: 100%;&quot; border=&quot;1&quot;&gt;&#13;
+&lt;tbody&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;th style=&quot;width: auto;&quot;&gt;&lt;strong&gt;Method&lt;/strong&gt;&lt;/th&gt;&#13;
+&lt;th style=&quot;width: 75%;&quot;&gt;&lt;strong&gt;Description&lt;/strong&gt;&lt;/th&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;rewind()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Moves the iterator back to the first element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;key()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Returns the key of the current element. This can be a string or an index number, depending on the object.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;current()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Returns the value of the current element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;next()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Moves to the next element.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;tr&gt;&#13;
+&lt;td&gt;&lt;code&gt;valid()&lt;/code&gt;&lt;/td&gt;&#13;
+&lt;td&gt;Checks if there is a current element after calls to &lt;code&gt;next()&lt;/code&gt; or &lt;code&gt;rewind()&lt;/code&gt;. Returns &lt;code&gt;true&lt;/code&gt; if one is found; otherwise &lt;code&gt;false&lt;/code&gt;.&lt;/td&gt;&#13;
+&lt;/tr&gt;&#13;
+&lt;/tbody&gt;&#13;
+&lt;/table&gt;&#13;
+&#13;
+The following code shows the methods listed in table above in action by using a &lt;code&gt;while&lt;/code&gt; loop instead of &lt;code&gt;foreach&lt;/code&gt;.&#13;
+[php]&#13;
+&#13;
+[/php]</article>
+		<title>Extending iterators</title>
+		<article_id>878-revision-v1</article_id>
+		<updated>2018-07-24 19:06:59</updated>
+		<image>revision</image>
+	</entry>
+</blog>

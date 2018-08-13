@@ -1,0 +1,104 @@
+<?xml version="1.0"?>
+<rss version="2.0">
+	<channel>
+		<title>OOP News</title>
+		<link>http://oop.local/oop_news.xml</link>
+		<description>Get the latest news on PHP OOP.</description>
+		<lastBuildDate>Sun, 22 Jul 2018 19:23:52</lastBuildDate>
+		<docs>http://www.rssboard.org/rss-specification</docs>
+		<item>
+			<title>Reading and writing files with SplFileObject</title>
+			<description>The SplFileInfo class has a handy method called openFile(), which opens the file ready for reading or writing, and returns it as an instance of SplFileObject class. SplFileObject combines the convenience of SPl iteration with the familiarity of existing PHP functions for reading and writing files.</description>
+			<pubDate>Sun, 22 Jul 2018 19:23:52 +0100</pubDate>
+			<link>843-revision-v1</link>
+		</item>
+		<item>
+			<title>Screenshot_20180722_192228</title>
+			<description></description>
+			<pubDate>Sun, 22 Jul 2018 19:23:48 +0100</pubDate>
+			<link>screenshot_20180722_192228</link>
+		</item>
+		<item>
+			<title>Reading and writing files with SplFileObject</title>
+			<description>The SplFileInfo class has a handy method called openFile(), which opens the file ready for reading or writing, and returns it as an instance of SplFileObject class. SplFileObject combines the convenience of SPl iteration with the familiarity of existing PHP functions for reading and writing files.</description>
+			<pubDate>Sun, 22 Jul 2018 19:21:31 +0100</pubDate>
+			<link>843-revision-v1</link>
+		</item>
+		<item>
+			<title>Reading and writing files with SplFileObject</title>
+			<description>The SplFileInfo class has a handy method called openFile(), which opens the file ready for reading or writing, and returns it as an instance of SplFileObject class. SplFileObject combines the convenience of SPl iteration with the familiarity of existing PHP functions for reading and writing files.</description>
+			<pubDate>Sun, 22 Jul 2018 19:14:12 +0100</pubDate>
+			<link>843-revision-v1</link>
+		</item>
+		<item>
+			<title>Reading and writing files with SplFileObject</title>
+			<description>The SplFileInfo class has a handy method called openFile(), which opens the file ready for reading or writing, and returns it as an instance of SplFileObject class. SplFileObject combines the convenience of SPl iteration with the familiarity of existing PHP functions for reading and writing files.</description>
+			<pubDate>Sun, 22 Jul 2018 19:11:54 +0100</pubDate>
+			<link>843-revision-v1</link>
+		</item>
+		<item>
+			<title>Finding files of a particular type</title>
+			<description>SPL directory iterators can easily be combined with other iterators. To find an XML filename extension when looping through a list of files, use case-insensitive PCRE: /\.xml$/i like this:&#13;
+[php]&#13;
+$dir = new RecursiveIteratorIterator(new RecursiveDirectoryIterator('/var/www/oop.local/'));&#13;
+$xmlFiles = new RegexIterator($dir, '/\.xml$/i');&#13;
+&#13;
+foreach ($xmlFiles as $file) {&#13;
+	echo $file .</description>
+			<pubDate>Sun, 22 Jul 2018 18:54:38 +0100</pubDate>
+			<link>finding-files-of-a-particular-type</link>
+		</item>
+		<item>
+			<title>Looping with SPL</title>
+			<description>Based on “PHP Object-Oriented Solutions” (2008) book by David Powers. 
+&#13;
+ 	SPL Iterators&#13;
+&#13;
+ 	Limiting the number of loops with the LimitIterator&#13;
+ 	Using SimpleXML with an iterator&#13;
+ 	Looping sequentially through more than one set of data&#13;
+ 	Looking ahead with the CachingIterator&#13;
+ 	Using anonymous iterators as shorthand&#13;
+&#13;
+&#13;
+ 	Examining files and directories&#13;
+&#13;
+ 	Using DirectoryIterator&#13;
+ 	Including subdirectories in a single operation&#13;
+ 	Extracting file information with SplFileInfo&#13;
+ 	Finding files of a particular type&#13;
+&#13;
+&#13;
+</description>
+			<pubDate>Sun, 22 Jul 2018 18:49:17 +0100</pubDate>
+			<link>765-revision-v1</link>
+		</item>
+		<item>
+			<title>Extracting file information with SplFileInfo</title>
+			<description>The SplFileInfo class reveals the properties of a file or directory. SplFileInfo objects are created automatically when you examine the contents of a directory with DirectoryIterator or RecursiveDirectoryIterator constructor, but you can also create one directly by passing the filename or path to the SplFileInfo constructor like this:&#13;
+[php]&#13;
+$file = new SplFileInfo('directory_iterator_3.php');&#13;
+echo $file-&amp;gt;getRealPath() .</description>
+			<pubDate>Sun, 22 Jul 2018 18:03:37 +0100</pubDate>
+			<link>extracting-file-information-with-splfileinfo</link>
+		</item>
+		<item>
+			<title>Extracting file information with SplFileInfo</title>
+			<description>The SplFileInfo class reveals the properties of a file or directory. SplFileInfo objects are created automatically when you examine the contents of a directory with DirectoryIterator or RecursiveDirectoryIterator constructor, but you can also create one directly by passing the filename or path to the SplFileInfo constructor like this:&#13;
+[php]&#13;
+$file = new SplFileInfo('directory_iterator_3.php');&#13;
+echo $file-&amp;gt;getRealPath() .</description>
+			<pubDate>Sun, 22 Jul 2018 18:03:37 +0100</pubDate>
+			<link>834-revision-v1</link>
+		</item>
+		<item>
+			<title>Extracting file information with SplFileInfo</title>
+			<description>The SplFileInfo class reveals the properties of a file or directory. SplFileInfo objects are created automatically when you examine the contents of a directory with DirectoryIterator or RecursiveDirectoryIterator constructor, but you can also create one directly by passing the filename or path to the SplFileInfo constructor like this:
+[php]
+$file = new SplFileInfo('directory_iterator_3.php');
+echo $file-&amp;gt;getRealPath() .</description>
+			<pubDate>Sun, 22 Jul 2018 18:01:39 +0100</pubDate>
+			<link>834-autosave-v1</link>
+		</item>
+	</channel>
+</rss>
